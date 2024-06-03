@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.MyHereMap" parent="Base.Theme.MyHereMap" />
+
+    <style name="ThemeOverlay.search" parent="Theme.MyHereMap">
+        <item name="android:editTextColor">#000</item>
+        <item name="android:textColorHint">#000</item>
+    </style>
 </resources>
