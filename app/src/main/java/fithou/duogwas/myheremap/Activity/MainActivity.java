@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     LocationManager locationManager;
     Double latitude, longitude;
     public static final String apiKey = "823tLZoHjBu6zAgxcS0_RRKDaXY7s-uz5RLC1KGgeHo";
+    private Handler searchHandler = new Handler();
+    private Runnable searchRunnable;
+    private long DEBOUNCE_TIME = 300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,10 +125,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        if(query.length()==0){
+        if (query.length() == 0) {
             rcvSearchResult.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             rcvSearchResult.setVisibility(View.VISIBLE);
             searchAddress(query);
         }
@@ -133,13 +136,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if(newText.length()==0){
-            rcvSearchResult.setVisibility(View.GONE);
-        }
-        else {
-            rcvSearchResult.setVisibility(View.VISIBLE);
-            searchAddress(newText);
-        }
+        searchHandler.removeCallbacks(searchRunnable);
+        searchRunnable = new Runnable() {
+            @Override
+            public void run() {
+                searchAddress(newText);
+            }
+        };
+        searchHandler.postDelayed(searchRunnable, DEBOUNCE_TIME);
         return false;
     }
 }
