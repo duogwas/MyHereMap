@@ -136,14 +136,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        searchHandler.removeCallbacks(searchRunnable);
-        searchRunnable = new Runnable() {
-            @Override
-            public void run() {
-                searchAddress(newText);
-            }
-        };
-        searchHandler.postDelayed(searchRunnable, DEBOUNCE_TIME);
+        if (newText.length() == 0) {
+            rcvSearchResult.setVisibility(View.GONE);
+        } else {
+            rcvSearchResult.setVisibility(View.VISIBLE);
+            searchHandler.removeCallbacks(searchRunnable);
+            searchRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    searchAddress(newText);
+                }
+            };
+            searchHandler.postDelayed(searchRunnable, DEBOUNCE_TIME);
+        }
         return false;
     }
 }
